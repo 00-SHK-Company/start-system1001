@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHK company</title>
+<meta name="description" content="SHK company — Tecnologia, investimentos e inovação.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="logo-var.css">
+<style>
+:root{
+  --bg: #06050e;
+  --bg-1: #0a0919;
+  --bg-2: #0d0c22;
+
+  --ink: #f2effa;
+  --ink-dim: #ada7c9;
+  --ink-faint: #6e6890;
+
+  --purple: #5a1fd0;
+  --purple-2: #7c3cf5;
+  --blue: #1c69ff;
+
+  --border: rgba(148, 126, 255, 0.14);
+  --border-strong: rgba(255,255,255,0.16);
+  --market-green: #1fe08a;
+
+  --grad-brand: linear-gradient(125deg, var(--purple) 0%, var(--blue) 58%, var(--purple-2) 100%);
+  --grad-text: linear-gradient(95deg, #cdb8ff 0%, #9fc2ff 50%, #d9b8ff 100%);
+
+  --font-display: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+  --font-body: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html, body{ height:100%; }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body{
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+
+/* glow ambiance, same tone as the hero section */
+body::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(90,31,208,0.35), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 75%, rgba(28,105,255,0.28), transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* faint HUD grid, same cue as the hero's command-center background */
+body::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(148,126,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,126,255,0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 85%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ============================================
+   SKIP BUTTON
+   ============================================ */
+.boot-skip{
+  position:fixed; top:20px; right:20px; z-index:5;
+  display:inline-flex; align-items:center; gap:6px;
+  font-family: var(--font-mono); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase;
+  color: var(--ink-faint);
+  background:transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor:pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, opacity 0.3s ease;
+}
+.boot-skip:hover{ color: var(--ink); border-color: var(--purple-2); }
+.boot-skip.is-hidden{ opacity:0; pointer-events:none; }
+
+/* ============================================
+   BOOT STAGE — core + terminal
+   ============================================ */
+.stage-wrap{
+  position:relative; z-index:2;
+  width:100%; max-width:420px; min-height:min(540px, 86vh);
+}
+.boot-stage{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:30px;
+  padding: 32px;
+  transition: opacity 0.4s ease;
+}
+.boot-stage.is-hidden{ opacity:0; pointer-events:none; }
+
+.boot-core{ position:relative; width:120px; height:120px; display:flex; align-items:center; justify-content:center; }
+.boot-core-ring{
+  position:absolute; border-radius:50%;
+  border: 1px solid var(--border-strong);
+  opacity:0;
+}
+.boot-core-ring.r1{ inset:18px; animation: core-ring-in 0.8s ease forwards 0.3s, core-spin 6s linear infinite 0.3s; }
+.boot-core-ring.r2{ inset:0; border-color: var(--border); animation: core-ring-in 0.8s ease forwards 0.5s, core-spin-rev 10s linear infinite 0.5s; }
+@keyframes core-ring-in{ to{ opacity:1; } }
+@keyframes core-spin{ from{ transform:rotate(0); } to{ transform:rotate(360deg); } }
+@keyframes core-spin-rev{ from{ transform:rotate(0); } to{ transform:rotate(-360deg); } }
+.boot-core-dot{
+  width:10px; height:10px; border-radius:50%;
+  background: var(--grad-brand);
+  box-shadow: 0 0 24px 6px rgba(124,60,245,0.65);
+  animation: core-pulse 1.6s ease-in-out infinite;
+}
+@keyframes core-pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.6); } }
+.boot-core-label{
+  position:absolute; bottom:-28px;
+  font-family: var(--font-mono); font-size:0.7rem; letter-spacing:0.4em;
+  color: var(--ink-faint);
+  opacity:0;
+  animation: core-label-in 0.6s ease forwards 1s;
+}
+@keyframes core-label-in{ to{ opacity:1; } }
+
+.boot-terminal{
+  width:100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(10,9,25,0.6);
+  backdrop-filter: blur(6px);
+  padding: 18px 20px;
+  opacity:0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.boot-terminal.is-visible{ opacity:1; transform:none; }
+.boot-terminal-head{
+  display:flex; align-items:center; gap:8px;
+  font-family: var(--font-mono); font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase;
+  color: var(--ink-faint);
+  margin-bottom:12px; padding-bottom:10px;
+  border-bottom: 1px solid var(--border);
+}
+.boot-terminal-head .dot{
+  width:6px; height:6px; border-radius:50%;
+  background: var(--market-green); box-shadow:0 0 8px var(--market-green);
+  animation: tblink 1.6s ease-in-out infinite;
+}
+@keyframes tblink{ 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
+
+.boot-lines{ display:flex; flex-direction:column; gap:8px; min-height:168px; }
+.boot-line{
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+  font-family: var(--font-mono); font-size:0.74rem;
+  color: var(--ink-dim);
+  opacity:0;
+}
+.boot-line.is-active{ opacity:1; }
+.boot-line .label{ white-space:nowrap; overflow:hidden; }
+.boot-line.is-typing .label::after{
+  content:"▋"; margin-left:2px; color: var(--purple-2);
+  animation: cursor-blink 1s steps(1) infinite;
+}
+@keyframes cursor-blink{ 0%,49%{ opacity:1; } 50%,100%{ opacity:0; } }
+.boot-line .ok{
+  color: var(--market-green); font-weight:600; white-space:nowrap;
+  opacity:0; transform:translateX(-4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.boot-line.is-done .ok{ opacity:1; transform:none; }
+
+.boot-status{
+  font-family: var(--font-mono); font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase;
+  color: var(--market-green);
+  text-align:center;
+  min-height:1.2em;
+  opacity:0;
+  transition: opacity 0.3s ease;
+}
+.boot-status.is-visible{ opacity:1; }
+
+/* ============================================
+   SHARK PASS — full-bleed layer
+   ============================================ */
+.boot-shark-layer{ position:fixed; inset:0; z-index:1; overflow:hidden; pointer-events:none; }
+.boot-shark{
+  position:absolute; top:50%; left:115%;
+  width:300px; height:auto;
+  transform: translateY(-50%);
+  opacity:0;
+  filter: drop-shadow(0 0 18px rgba(124,60,245,0.55));
+}
+.boot-shark.is-running{ animation: shark-pass 1.8s cubic-bezier(.3,.6,.4,1) forwards; }
+@keyframes shark-pass{
+  0%{ left:115%; opacity:0; }
+  8%{ opacity:0.68; }
+  85%{ opacity:0.68; }
+  100%{ left:-20%; opacity:0; }
+}
+.trail-bit{
+  position:absolute; top:50%; width:7px; height:7px; border-radius:2px;
+  transform: translate(-50%,-50%) scale(0.5);
+  opacity:0;
+  animation: trail-pop 0.6s ease forwards;
+}
+@keyframes trail-pop{
+  0%{ opacity:0; transform: translate(-50%,-50%) scale(0.4); }
+  35%{ opacity:1; transform: translate(-50%,-50%) scale(1); }
+  100%{ opacity:0; transform: translate(-50%,-50%) scale(0.6); }
+}
+
+/* ============================================
+   FINAL REVEAL
+   ============================================ */
+.reveal-wrap{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  gap:28px;
+  padding: 32px;
+  opacity:0;
+  transform: translateY(16px);
+  pointer-events:none;
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.16,.9,.35,1);
+}
+.reveal-wrap.is-visible{ opacity:1; transform:none; pointer-events:auto; }
+
+.status-line{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 7px 16px;
+}
+.status-line .dot{
+  width:6px; height:6px; border-radius:50%;
+  background: var(--market-green);
+  box-shadow: 0 0 10px var(--market-green);
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+.logo-frame{
+  display:inline-block;
+  position:relative;
+  padding: 22px;
+}
+.logo-frame i{
+  position:absolute;
+  width:16px; height:16px;
+  border: 1.5px solid rgba(173,167,201,0.4);
+}
+.logo-frame i:nth-child(1){ top:0; left:0; border-right:none; border-bottom:none; }
+.logo-frame i:nth-child(2){ top:0; right:0; border-left:none; border-bottom:none; }
+.logo-frame i:nth-child(3){ bottom:0; left:0; border-right:none; border-top:none; }
+.logo-frame i:nth-child(4){ bottom:0; right:0; border-left:none; border-top:none; }
+
+.logo-mark-purple{
+  display:block;
+  height: 168px;
+  aspect-ratio: 1.870 / 1;
+  width: auto;
+  background: #ffffff;
+  -webkit-mask-image: var(--logo-purple-src);
+  mask-image: var(--logo-purple-src);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  filter: drop-shadow(0 10px 34px rgba(124,60,245,0.45));
+}
+
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.brand-name{
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.brand-name .co{
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.reveal-wrap p.lead{
+  font-size: 1.05rem;
+  color: var(--ink-dim);
+  max-width: 42ch;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding: 15px 30px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.98rem;
+  border: 1px solid transparent;
+  text-decoration:none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  margin-top: 6px;
+}
+.btn-primary{
+  background: var(--grad-brand);
+  color: #fff;
+  box-shadow: 0 8px 30px -8px rgba(90, 31, 208, 0.65);
+}
+.btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 14px 36px -8px rgba(90, 31, 208, 0.8); }
+.btn-primary svg{ width:18px; height:18px; transition: transform 0.25s ease; }
+.btn-primary:hover svg{ transform: translateX(4px); }
+
+.intro-footer{
+  position:absolute;
+  bottom: 26px;
+  left:0; right:0;
+  text-align:center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  z-index:2;
+}
+
+@media (max-width: 480px){
+  .logo-mark-purple{ height: 120px; }
+  .boot-shark{ width:190px; }
+}
+</style>
+</head>
+<body>
+
+  <button class="boot-skip" id="boot-skip" type="button">pular intro <span aria-hidden="true">›</span></button>
+
+  <div class="boot-shark-layer" id="boot-shark-layer">
+    <div class="boot-trail" id="boot-trail"></div>
+    <img class="boot-shark" id="boot-shark" src="shark-full.png" alt="">
+  </div>
+
+  <div class="stage-wrap">
+    <div class="boot-stage" id="boot-stage">
+      <div class="boot-core">
+        <span class="boot-core-ring r1"></span>
+        <span class="boot-core-ring r2"></span>
+        <span class="boot-core-dot"></span>
+        <span class="boot-core-label">SHK</span>
+      </div>
+
+      <div class="boot-terminal" id="boot-terminal">
+        <div class="boot-terminal-head"><span class="dot"></span> SHK CORE</div>
+        <div class="boot-lines" id="boot-lines"></div>
+        <div class="boot-status" id="boot-status"></div>
+      </div>
+    </div>
+
+    <div class="reveal-wrap" id="reveal-wrap">
+      <span class="status-line"><span class="dot"></span> sistema online</span>
+      <span class="logo-frame">
+        <i></i><i></i><i></i><i></i>
+        <span class="logo-mark-purple" role="img" aria-label="SHK Company"></span>
+      </span>
+      <span class="eyebrow">Bem-vindo à SHK</span>
+      <h1 class="brand-name">SHK <span class="co">Company</span></h1>
+      <p class="lead">Construindo o próximo capítulo em tecnologia e investimentos. Entre e conheça o que estamos criando.</p>
+      <a href="site.html" class="btn btn-primary">
+        Entrar no universo SHK
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="intro-footer">© <span id="year"></span> SHK company. Todos os direitos reservados.</div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    (function bootSequence(){
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var stage = document.getElementById('boot-stage');
+      var reveal = document.getElementById('reveal-wrap');
+      var skipBtn = document.getElementById('boot-skip');
+      var terminal = document.getElementById('boot-terminal');
+      var linesWrap = document.getElementById('boot-lines');
+      var sharkLayer = document.getElementById('boot-shark-layer');
+      var shark = document.getElementById('boot-shark');
+      var trail = document.getElementById('boot-trail');
+      var statusEl = document.getElementById('boot-status');
+
+      var modules = [
+        'Carregando Inteligência',
+        'Carregando Tecnologia',
+        'Carregando Investimentos',
+        'Carregando Projetos',
+        'Carregando Entretenimento',
+        'Carregando Rede'
+      ];
+
+      var timers = [];
+      var skipped = false;
+
+      function schedule(fn, delay){
+        var id = setTimeout(function(){ if(!skipped) fn(); }, delay);
+        timers.push(id);
+        return id;
+      }
+      function clearAll(){ timers.forEach(clearTimeout); timers = []; }
+
+      function showFinal(){
+        if(skipped) return;
+        skipped = true;
+        clearAll();
+        stage.classList.add('is-hidden');
+        sharkLayer.style.display = 'none';
+        skipBtn.classList.add('is-hidden');
+        reveal.classList.add('is-visible');
+      }
+
+      skipBtn.addEventListener('click', showFinal);
+
+      if(reduceMotion){
+        showFinal();
+        return;
+      }
+
+      var lineEls = modules.map(function(text){
+        var row = document.createElement('div');
+        row.className = 'boot-line';
+        row.innerHTML = '<span class="label"></span><span class="ok">OK</span>';
+        linesWrap.appendChild(row);
+        return { row: row, label: row.querySelector('.label'), text: text };
+      });
+
+      function typeLine(idx, done){
+        if(skipped) return;
+        var item = lineEls[idx];
+        item.row.classList.add('is-active', 'is-typing');
+        var full = '> ' + item.text + '........';
+        var i = 0;
+        (function tick(){
+          if(skipped) return;
+          item.label.textContent = full.slice(0, i);
+          i++;
+          if(i <= full.length){
+            timers.push(setTimeout(tick, 16 + Math.random() * 10));
+          } else {
+            item.row.classList.remove('is-typing');
+            item.row.classList.add('is-done');
+            schedule(done, 140);
+          }
+        })();
+      }
+
+      function runLines(idx){
+        if(skipped) return;
+        if(idx >= lineEls.length){
+          schedule(function(){
+            statusEl.textContent = 'Todos os sistemas online';
+            statusEl.classList.add('is-visible');
+            schedule(showFinal, 1100);
+          }, 250);
+          return;
+        }
+        typeLine(idx, function(){ runLines(idx + 1); });
+      }
+
+      function buildTrail(){
+        var count = 60;
+        var colors = ['#ff2fb0', '#4fa3ff', '#7c3cf5', '#cdb8ff', '#1fe08a'];
+        for(var i = 0; i < count; i++){
+          var p = document.createElement('span');
+          p.className = 'trail-bit';
+          var leftPct = (i / (count - 1)) * 100 + (Math.random() * 2 - 1);
+          var delayMs = 2600 + ((115 - leftPct) / 135) * 1800 + Math.random() * 90;
+          var size = 4 + Math.random() * 8;
+          var yJitter = (Math.random() * 90 - 45);
+          p.style.left = leftPct + '%';
+          p.style.top = 'calc(50% + ' + yJitter.toFixed(0) + 'px)';
+          p.style.width = size.toFixed(1) + 'px';
+          p.style.height = size.toFixed(1) + 'px';
+          p.style.animationDelay = delayMs.toFixed(0) + 'ms';
+          p.style.animationDuration = (0.45 + Math.random() * 0.4).toFixed(2) + 's';
+          p.style.background = colors[i % colors.length];
+          trail.appendChild(p);
+        }
+      }
+      buildTrail();
+
+      schedule(function(){ terminal.classList.add('is-visible'); }, 900);
+      schedule(function(){ shark.classList.add('is-running'); }, 2600);
+      schedule(function(){ runLines(0); }, 1300);
+    })();
+  </script>
+</body>
+</html>
